@@ -1,17 +1,18 @@
-
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  role          Role?   @default(STUDENT)
-  phone         String?
-  status        UserStatus?   @default(ACTIVE)
-  sessions      Session[]
-  accounts      Account[]
+  id             String          @id
+  name           String
+  email          String
+  emailVerified  Boolean         @default(false)
+  image          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  role           Role?           @default(STUDENT)
+  phone          String?
+  status         UserStatus?     @default(ACTIVE)
+  sessions       Session[]
+  accounts       Account[]
+  studentProfile StudentProfile?
+  tutorProfile   TutorProfile?
 
   @@unique([email])
   @@map("user")
@@ -70,6 +71,7 @@ enum Role {
   TUTOR
   ADMIN
 }
+
 enum UserStatus {
   ACTIVE
   SUSPENDED

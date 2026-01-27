@@ -1,0 +1,26 @@
+model StudentProfile {
+  id     String  @id @default(cuid())
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id])
+  bio    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TutorProfile {
+  id     String  @id @default(cuid())
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id])
+  bio    String?
+
+  headline   String?
+  hourlyRate Float?
+  experience Int?
+  isVerified Boolean @default(false)
+  ratings    Float?  @default(0.0)
+  reviews    Int?    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
