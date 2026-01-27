@@ -4,8 +4,10 @@ model StudentProfile {
   user   User    @relation(fields: [userId], references: [id])
   bio    String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+  reviews   Review[]
 }
 
 model TutorProfile {
@@ -14,14 +16,17 @@ model TutorProfile {
   user   User    @relation(fields: [userId], references: [id])
   bio    String?
 
-  headline   String?
-  hourlyRate Float?
-  experience Int?
-  isVerified Boolean @default(false)
-  ratings    Float?  @default(0.0)
-  reviews    Int?    @default(0)
+  headline     String?
+  hourlyRate   Float?
+  experience   Int?
+  isVerified   Boolean @default(false)
+  ratings      Float?  @default(0.0)
+  reviewscount Int?    @default(0)
 
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  tutorSubjects TutorSubject[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  tutorSubjects     TutorSubject[]
+  availabilitySlots AvailabilitySlot[]
+  bookings          Booking[]
+  reviews           Review[]
 }
