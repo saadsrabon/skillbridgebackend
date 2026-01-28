@@ -4,7 +4,7 @@ import { subjectController } from './subject.controller';
 const router = express.Router()
 //add comment for all routes
 
-router.post('/create-subject',authChecker(UserRole.ADMIN),subjectController.createSubject);
+router.post('/create-subject',authChecker(UserRole.ADMIN, UserRole.TUTOR),subjectController.createSubject);
 
 router.get('/subjects', subjectController.getAllSubjects);
 

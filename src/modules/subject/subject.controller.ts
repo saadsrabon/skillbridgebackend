@@ -1,8 +1,17 @@
 import { Request, Response } from "express";
+import { subjectService } from "./subject.service";
 
 const createSubject = async (req: Request, res: Response) => {
-    // Logic to create a subject
-    res.status(201).json({ message: 'Subject created' });
+    try {
+        // Logic to create a subject
+        const subject = await subjectService.createSubject(req.body);
+        res.status(201).json({ message: 'Subject created' , subject});
+    } catch (e) {
+        res.status(400).json({
+            error: "Subject creation failed",
+            details: e
+        })
+    }
 };
 
 const getAllSubjects = async (req: Request, res: Response) => {
