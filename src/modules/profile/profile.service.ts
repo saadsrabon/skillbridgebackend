@@ -55,8 +55,24 @@ const getProfileByUserId = async (userId: string, roleType: UserRole) => {
         });
     }
 }
+const updateProfileByUserId = async (userId: string, data: Partial<ProfileData>, roleType: UserRole) => {
+    console.log("Updating profile for userId:", userId, "with data:", data, "and role:", roleType);
+    if(roleType === 'TUTOR'){
+        return await prisma.tutorProfile.update({
+            where: { userId },
+            data
+        });
+    }
+    else if(roleType === 'STUDENT'){
+        return await prisma.studentProfile.update({
+            where: { userId },
+            data
+        });
+    }
+}
 
 export const profileService = {
     createProfile,
-    getProfileByUserId
+    getProfileByUserId,
+    updateProfileByUserId
 };

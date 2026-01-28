@@ -44,7 +44,28 @@ const getProfile = async (req:Request, res:Response) => {
         })
     }
 }
+
+const updateProfile = async (req:Request, res:Response) => {
+    try {
+        if (!req.user) {
+              return res.status(401).json({
+                error: "Unauthorized"
+            })
+        }
+        const userId = req.user.id;
+        const roleType = req.user.role as string as UserRole;
+        const updateData = req.body;
+        const updatedProfile = await profileService.updateProfileByUserId(userId, updateData, roleType);
+        res.status(200).json(updatedProfile);
+    } catch (e) {
+        res.status(400).json({
+            error: "Failed to update profile",
+            details: e
+        })
+    }
+}
 export const profileController = {
     createProfile,
-    getProfile
+    getProfile,
+    updateProfile
 };
