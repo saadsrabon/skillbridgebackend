@@ -26,6 +26,7 @@ declare global {
 
 const authChecker = (...roles: UserRole[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {
+        console.log("authChecker called");
         try {
             // get user session
             const session = await auth.api.getSession({

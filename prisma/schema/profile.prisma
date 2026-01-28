@@ -19,7 +19,7 @@ model TutorProfile {
   headline     String?
   hourlyRate   Float?
   experience   Int?
-  isVerified   Boolean @default(false)
+
   ratings      Float?  @default(0.0)
   reviewscount Int?    @default(0)
 
