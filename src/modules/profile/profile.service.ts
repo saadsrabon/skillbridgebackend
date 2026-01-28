@@ -45,13 +45,29 @@ return profile
 const getProfileByUserId = async (userId: string, roleType: UserRole) => {
     console.log("Fetching profile for userId:", userId, "with role:", roleType);
     if(roleType === 'TUTOR'){
-        return await prisma.tutorProfile.findUnique({
-            where: { userId }
+        return await prisma.user.findUnique({
+            where: { id: userId },
+            include: { tutorProfile: {
+                select: {
+                    bio: true,
+                    headline: true,
+                    hourlyRate: true,
+                    experience: true,
+                    ratings: true,
+                    reviewscount: true
+                }
+            } }
+
         });
     }
     else if(roleType === 'STUDENT'){
-        return await prisma.studentProfile.findUnique({
-            where: { userId }
+        return await prisma.user.findUnique({
+            where: { id: userId },
+            include: { studentProfile: true }
+        });
+    }else if(roleType === 'ADMIN'){
+        return await prisma.user.findUnique({
+            where: { id: userId },
         });
     }
 }
