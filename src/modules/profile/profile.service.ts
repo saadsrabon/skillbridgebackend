@@ -1,6 +1,7 @@
+import { Request } from "express";
 import { prisma } from "../../lib/prisma";
 
-const createProfile = async (data:any) => {
+const createProfile = async (data: any) => {
    
 //logic to create user on
 const profile = await prisma.studentProfile.create({

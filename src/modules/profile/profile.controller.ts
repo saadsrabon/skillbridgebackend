@@ -1,10 +1,15 @@
 import { Request, Response } from "express";
 import { profileService } from "./profile.service";
+import { role } from "better-auth/plugins";
 
 const createProfile = async (req:Request, res:Response) => {
      try {
-        console.log(req.user);
-        const result = await profileService.createProfile(req.body);
+         if (!req.user) {
+            return res.status(401).json({
+                error: "Unauthorized"
+            })
+        }
+        const result = await profileService.createProfile(req.user);
         res.status(200).json(result)
     } catch (e) {
         res.status(400).json({
