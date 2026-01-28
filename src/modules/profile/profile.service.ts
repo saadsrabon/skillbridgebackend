@@ -17,7 +17,7 @@ interface ProfileData {
 
 const createProfile = async (data: ProfileData) => {
     console.log("Creating profile with data:", data);
-    
+  
  if(data.role === 'TUTOR'){
     const profile = await prisma.tutorProfile.create({
         data: {
