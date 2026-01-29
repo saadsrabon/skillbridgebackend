@@ -11,7 +11,7 @@ router.post(
 );
 
 // Get all subjects (Public)
-router.get('/subjects', subjectController.getAllSubjects);
+router.get('/', subjectController.getAllSubjects);
 
 // Get a specific subject by ID (Public)
 router.get('/subject/:id', subjectController.getSubjectById);

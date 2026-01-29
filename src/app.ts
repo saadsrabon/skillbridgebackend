@@ -7,6 +7,7 @@ import { notFound } from './middlewares/notfound';
 import errorHandler from './middlewares/globalErrorhandlers';
 import { profileRoutes } from './modules/profile/profile.routes';
 import { subjectRoutes } from './modules/subject/subject.routes';
+import { availabilityRoutes } from './modules/availiblity/availiblity.routes';
 app.use(cors({
     origin: '*',
     credentials: true
@@ -21,6 +22,7 @@ app.get('/', (req, res) => {
 
 app.use('/auth', profileRoutes);
 app.use('/subject', subjectRoutes);
+app.use("/slots", availabilityRoutes);
 
 
 // Global Error Handlers and not found middleware

@@ -6,9 +6,25 @@ interface SubjectData {
 }
 
 const createSubject = async (data: SubjectData) => {
-  return await prisma.subject.create({
-    data,
+  const existing = await prisma.subject.findFirst({
+  where: {
+  OR: [
+    { slug: data.slug },
+    { name: data.name },
+  ],
+}
+});
+
+if (existing) {
+  throw new Error('Subject with this slug or name already exists');
+}
+    const result = await prisma.subject.create({
+    data:{
+      name: data.name,
+      slug: data.slug
+    }
   });
+  return result;
 };
 
 const getAllSubjects = async () => {

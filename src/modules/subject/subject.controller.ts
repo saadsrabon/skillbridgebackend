@@ -56,10 +56,24 @@ const getSubjectById = async (req: Request, res: Response) => {
 const assignSubjectToTutor = async (req: Request, res: Response) => {
   try {
     const { tutorId, subjectId } = req.body;
-    const assignment = await subjectService.assignSubjectToTutor(tutorId, subjectId);
+    if (!tutorId || !subjectId) {
+      return res.status(400).json({ error: 'tutorId and subjectId are required' });
+    }
+    const tutorSubjectExists = await subjectService.getAllSubjectsOfTutor(tutorId);
+    if (tutorSubjectExists.length === 0) {
+      return res.status(400).json({ error: 'Tutor has no subjects assigned yet' });
+      // Tutor has no subjects assigned yet
+    }
+    const alreadyAssigned = tutorSubjectExists.find(
+      (ts) => ts.subjectId === subjectId
+    );
+    if (alreadyAssigned) {
+      return res.status(400).json({ error: 'Subject is already assigned to this tutor' });
+    }
+    const assignedSubjects = await subjectService.assignSubjectToTutor(tutorId, subjectId);
     res.status(201).json({
       message: 'Subject assigned to tutor successfully',
-      assignment,
+      assignedSubjects,
     });
   } catch (e: any) {
     res.status(400).json({
@@ -125,7 +139,7 @@ const getTutorssubjects = async (req: Request, res: Response) => {
     const { tutorId } = req.params;
     if (!tutorId || typeof tutorId !== 'string') {
       return res.status(400).json({ error: 'Invalid tutor ID' });
-    } 
+    }
     const subjects = await subjectService.getAllSubjectsOfTutor(tutorId);
     res.status(200).json({
       message: 'Subjects retrieved successfully',
