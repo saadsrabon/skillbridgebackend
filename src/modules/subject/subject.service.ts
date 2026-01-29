@@ -70,6 +70,16 @@ const removeSubjectFromTutor = async (tutorId: string, subjectId: string) => {
   });
 };
 
+///need one api to show the teacher who have his subjects assigned
+const getAllSubjectsOfTutor = async (tutorId: string) => {
+  return await prisma.tutorSubject.findMany({
+    where: { tutorId },
+    include: {
+      subject: true,
+    },
+  });
+};
+
 export const subjectService = {
   createSubject,
   getAllSubjects,
@@ -78,4 +88,5 @@ export const subjectService = {
   deleteSubject,
   assignSubjectToTutor,
   removeSubjectFromTutor,
+  getAllSubjectsOfTutor,
 };

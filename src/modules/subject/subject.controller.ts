@@ -120,7 +120,24 @@ const updateSubjectDetails = async (req: Request, res: Response) => {
     });
   }
 };
-
+const getTutorssubjects = async (req: Request, res: Response) => {
+  try {
+    const { tutorId } = req.params;
+    if (!tutorId || typeof tutorId !== 'string') {
+      return res.status(400).json({ error: 'Invalid tutor ID' });
+    } 
+    const subjects = await subjectService.getAllSubjectsOfTutor(tutorId);
+    res.status(200).json({
+      message: 'Subjects retrieved successfully',
+      subjects,
+    });
+  } catch (e: any) {
+    res.status(400).json({
+      error: 'Failed to retrieve subjects',
+      details: e.message,
+    });
+  }
+};
 export const subjectController = {
   createSubject,
   getAllSubjects,
@@ -129,4 +146,5 @@ export const subjectController = {
   removeSubjectFromTutor,
   deleteSubject,
   updateSubjectDetails,
+  getTutorssubjects,
 };

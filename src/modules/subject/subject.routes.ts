@@ -15,7 +15,8 @@ router.get('/subjects', subjectController.getAllSubjects);
 
 // Get a specific subject by ID (Public)
 router.get('/subject/:id', subjectController.getSubjectById);
-
+//get all subjects of a tutor
+router.get('/tutor-subjects/:tutorId', subjectController.getTutorssubjects);
 // Assign subject to tutor (Admin and Tutor)
 router.post(
   '/assign-subject',
