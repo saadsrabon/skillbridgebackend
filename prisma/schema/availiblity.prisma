@@ -1,7 +1,7 @@
 model AvailabilitySlot {
   id      String       @id @default(cuid())
   tutorId String
-  tutor   TutorProfile @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  tutor   TutorProfile @relation(fields: [tutorId], references: [userId], onDelete: Cascade)
 
   startTime DateTime
   endTime   DateTime

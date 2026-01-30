@@ -79,7 +79,7 @@ export const createAvailabilitySlot = async (
 
     // Verify tutor exists
     const tutorExists = await prisma.tutorProfile.findUnique({
-      where: { id: data.tutorId },
+      where: { userId: data.tutorId },
     });
 
     if (!tutorExists) {
@@ -191,7 +191,7 @@ export const getTutorAvailabilitySlots = async (
   try {
     // Verify tutor exists
     const tutorExists = await prisma.tutorProfile.findUnique({
-      where: { id: tutorId },
+      where: { userId: tutorId },
     });
 
     if (!tutorExists) {
