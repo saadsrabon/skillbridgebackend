@@ -8,8 +8,10 @@ import errorHandler from './middlewares/globalErrorhandlers';
 import { profileRoutes } from './modules/profile/profile.routes';
 import { subjectRoutes } from './modules/subject/subject.routes';
 import { availabilityRoutes } from './modules/availiblity/availiblity.routes';
+import { bookingRoutes } from './modules/boooking/booking.routes';
+import { adminRoutes } from './modules/admin/admin.routes';
 app.use(cors({
-    origin: '*',
+    origin: 'http://localhost:3000',
     credentials: true
 }))
 app.use(express.json())
@@ -18,11 +20,12 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-// Profile Routes
-
-app.use('/auth', profileRoutes);
+// API Routes
+app.use('/profiles', profileRoutes);
 app.use('/subject', subjectRoutes);
 app.use("/slots", availabilityRoutes);
+app.use('/bookings', bookingRoutes);
+app.use('/admin', adminRoutes);
 
 
 // Global Error Handlers and not found middleware

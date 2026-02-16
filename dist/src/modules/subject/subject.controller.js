@@ -1,0 +1,163 @@
+import { subjectService } from './subject.service';
+const createSubject = async (req, res) => {
+    try {
+        const subject = await subjectService.createSubject(req.body);
+        res.status(201).json({
+            message: 'Subject created successfully',
+            subject,
+        });
+    }
+    catch (e) {
+        res.status(400).json({
+            error: 'Subject creation failed',
+            details: e.message,
+        });
+    }
+};
+const getAllSubjects = async (req, res) => {
+    try {
+        const subjects = await subjectService.getAllSubjects();
+        res.status(200).json({
+            message: 'Subjects retrieved successfully',
+            subjects,
+        });
+    }
+    catch (e) {
+        res.status(400).json({
+            error: 'Failed to retrieve subjects',
+            details: e.message,
+        });
+    }
+};
+const getSubjectById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id || typeof id !== 'string') {
+            return res.status(400).json({ error: 'Invalid subject ID' });
+        }
+        const subject = await subjectService.getSubjectById(id);
+        if (!subject) {
+            return res.status(404).json({ error: 'Subject not found' });
+        }
+        res.status(200).json({
+            message: 'Subject retrieved successfully',
+            subject,
+        });
+    }
+    catch (e) {
+        res.status(400).json({
+            error: 'Failed to retrieve subject',
+            details: e.message,
+        });
+    }
+};
+const assignSubjectToTutor = async (req, res) => {
+    try {
+        const { tutorId, subjectId } = req.body;
+        if (!tutorId || !subjectId) {
+            return res.status(400).json({ error: 'tutorId and subjectId are required' });
+        }
+        const tutorSubjectExists = await subjectService.getAllSubjectsOfTutor(tutorId);
+        if (tutorSubjectExists.length === 0) {
+            return res.status(400).json({ error: 'Tutor has no subjects assigned yet' });
+            // Tutor has no subjects assigned yet
+        }
+        const alreadyAssigned = tutorSubjectExists.find((ts) => ts.subjectId === subjectId);
+        if (alreadyAssigned) {
+            return res.status(400).json({ error: 'Subject is already assigned to this tutor' });
+        }
+        const assignedSubjects = await subjectService.assignSubjectToTutor(tutorId, subjectId);
+        res.status(201).json({
+            message: 'Subject assigned to tutor successfully',
+            assignedSubjects,
+        });
+    }
+    catch (e) {
+        res.status(400).json({
+            error: 'Failed to assign subject to tutor',
+            details: e.message,
+        });
+    }
+};
+const removeSubjectFromTutor = async (req, res) => {
+    try {
+        const { tutorId, subjectId } = req.body;
+        await subjectService.removeSubjectFromTutor(tutorId, subjectId);
+        res.status(200).json({
+            message: 'Subject removed from tutor successfully',
+        });
+    }
+    catch (e) {
+        res.status(400).json({
+            error: 'Failed to remove subject from tutor',
+            details: e.message,
+        });
+    }
+};
+const deleteSubject = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id || typeof id !== 'string') {
+            return res.status(400).json({ error: 'Invalid subject ID' });
+        }
+        await subjectService.deleteSubject(id);
+        res.status(200).json({
+            message: 'Subject deleted successfully',
+        });
+    }
+    catch (e) {
+        res.status(400).json({
+            error: 'Failed to delete subject',
+            details: e.message,
+        });
+    }
+};
+const updateSubjectDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id || typeof id !== 'string') {
+            return res.status(400).json({ error: 'Invalid subject ID' });
+        }
+        const subject = await subjectService.updateSubject(id, req.body);
+        res.status(200).json({
+            message: 'Subject updated successfully',
+            subject,
+        });
+    }
+    catch (e) {
+        res.status(400).json({
+            error: 'Failed to update subject',
+            details: e.message,
+        });
+    }
+};
+const getTutorssubjects = async (req, res) => {
+    try {
+        const { tutorId } = req.params;
+        if (!tutorId || typeof tutorId !== 'string') {
+            return res.status(400).json({ error: 'Invalid tutor ID' });
+        }
+        const subjects = await subjectService.getAllSubjectsOfTutor(tutorId);
+        res.status(200).json({
+            message: 'Subjects retrieved successfully',
+            subjects,
+        });
+    }
+    catch (e) {
+        res.status(400).json({
+            error: 'Failed to retrieve subjects',
+            details: e.message,
+        });
+    }
+};
+export const subjectController = {
+    createSubject,
+    getAllSubjects,
+    getSubjectById,
+    assignSubjectToTutor,
+    removeSubjectFromTutor,
+    deleteSubject,
+    updateSubjectDetails,
+    getTutorssubjects,
+};
+//# sourceMappingURL=subject.controller.js.map

@@ -72,7 +72,7 @@ export const createBooking = async (
 
     // Check if tutor exists
     const tutorExists = await prisma.tutorProfile.findUnique({
-      where: { userId: data.tutorId },
+      where: { id: data.tutorId },
       include: { user: true },
     });
 
@@ -91,9 +91,9 @@ export const createBooking = async (
     }
 
     // Check if student exists
-    const studentExists = await prisma.studentProfile.findUnique({
-      where: { id: data.studentId },
-      include: { user: true },
+    const studentExists = await prisma.user.findUnique({
+      where: { id: data.studentId   },
+      include: { studentProfile: true },
     });
 
     if (!studentExists) {
@@ -103,18 +103,18 @@ export const createBooking = async (
       };
     }
 
-    if (!studentExists.user.status) {
-      return {
-        success: false,
-        error: 'Student account is inactive',
-      };
-    }
+    // if (!studentExists.user.status) {
+    //   return {
+    //     success: false,
+    //     error: 'Student account is inactive',
+    //   };
+    // }
 
     // Check if availability slot exists and belongs to the tutor
     const availabilitySlot = await prisma.availabilitySlot.findUnique({
       where: { id: data.availableSlotId },
     });
-
+       console.log(availabilitySlot);
     if (!availabilitySlot) {
       return {
         success: false,
@@ -603,6 +603,153 @@ export const getBookingsInDateRange = async (
     return {
       success: false,
       error: `Failed to fetch bookings in date range: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    };
+  }
+};
+
+/**
+ * Create a review for a completed booking
+ * Validates that:
+ * - Booking exists and is COMPLETED
+ * - Student owns the booking
+ * - No review exists for this booking yet
+ * - Rating is between 1-5
+ */
+interface CreateReviewRequest {
+  bookingId: string;
+  studentId: string;
+  rating: number;
+  comment?: string;
+}
+
+export const createReview = async (
+  data: CreateReviewRequest
+): Promise<ServiceResponse<any>> => {
+  try {
+    // Validate input
+    if (!data.bookingId || typeof data.bookingId !== 'string') {
+      return {
+        success: false,
+        error: 'Valid booking ID is required',
+      };
+    }
+
+    if (!data.studentId || typeof data.studentId !== 'string') {
+      return {
+        success: false,
+        error: 'Valid student ID is required',
+      };
+    }
+
+    if (typeof data.rating !== 'number' || data.rating < 1 || data.rating > 5) {
+      return {
+        success: false,
+        error: 'Rating must be a number between 1 and 5',
+      };
+    }
+
+    // Get the booking
+    const booking = await prisma.booking.findUnique({
+      where: { id: data.bookingId },
+      include: {
+        review: true,
+        tutor: true,
+      },
+    });
+
+    if (!booking) {
+      return {
+        success: false,
+        error: 'Booking not found',
+      };
+    }
+
+    // Verify student owns the booking
+    if (booking.studentId !== data.studentId) {
+      return {
+        success: false,
+        error: 'You can only review your own bookings',
+      };
+    }
+
+    // Verify booking is completed
+    if (booking.status !== BookingStatus.COMPLETED) {
+      return {
+        success: false,
+        error: 'You can only review completed sessions',
+      };
+    }
+
+    // Check if review already exists
+    if (booking.review) {
+      return {
+        success: false,
+        error: 'A review already exists for this booking',
+      };
+    }
+
+    // Create review and update tutor ratings
+    const review = await prisma.$transaction(async (tx) => {
+      // Create the review
+      const newReview = await tx.review.create({
+        data: {
+          bookingId: data.bookingId,
+          studentId: data.studentId,
+          tutorId: booking.tutorId,
+          rating: data.rating,
+          comment: data.comment || null,
+        },
+        include: {
+          student: {
+            include: {
+              user: {
+                select: {
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          },
+          tutor: {
+            include: {
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // Update tutor's average rating and review count
+      const tutorReviews = await tx.review.findMany({
+        where: { tutorId: booking.tutorId },
+        select: { rating: true },
+      });
+
+      const totalRating = tutorReviews.reduce((sum, r) => sum + r.rating, 0);
+      const avgRating = totalRating / tutorReviews.length;
+
+      await tx.tutorProfile.update({
+        where: { id: booking.tutorId },
+        data: {
+          ratings: avgRating,
+          reviewscount: tutorReviews.length,
+        },
+      });
+
+      return newReview;
+    });
+
+    return {
+      success: true,
+      data: review,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: `Failed to create review: ${error instanceof Error ? error.message : 'Unknown error'}`,
     };
   }
 };

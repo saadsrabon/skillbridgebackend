@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { BookingStatus } from '../../../generated/prisma/client';
+import { prisma } from '../../lib/prisma';
 import {
   createBooking,
   updateBookingStatus,
@@ -8,6 +9,7 @@ import {
   getTutorBookings,
   cancelBooking,
   getBookingsInDateRange,
+  createReview,
 } from './booking.service';
 
 /**
@@ -292,6 +294,81 @@ export const getBookingsInDateRangeController = async (
 
     if (result.success) {
       res.status(200).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: `Internal server error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    });
+  }
+};
+
+/**
+ * Create a review for a completed booking
+ * POST /api/bookings/:bookingId/review
+ */
+export const createReviewController = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { bookingId } = req.params;
+    const { rating, comment } = req.body;
+
+    if (!bookingId) {
+      res.status(400).json({
+        success: false,
+        error: 'Booking ID is required',
+      });
+      return;
+    }
+
+    if (!rating || typeof rating !== 'number') {
+      res.status(400).json({
+        success: false,
+        error: 'Rating is required and must be a number',
+      });
+      return;
+    }
+
+    if (rating < 1 || rating > 5) {
+      res.status(400).json({
+        success: false,
+        error: 'Rating must be between 1 and 5',
+      });
+      return;
+    }
+
+    // Get student ID from authenticated user
+    if (!req.user) {
+      res.status(401).json({
+        success: false,
+        error: 'Unauthorized',
+      });
+      return;
+    }
+
+    // Get student profile ID
+    const studentProfile = await prisma.studentProfile.findUnique({
+      where: { userId: req.user.id },
+    });
+
+    if (!studentProfile) {
+      res.status(404).json({
+        success: false,
+        error: 'Student profile not found',
+      });
+      return;
+    }
+
+    const result = await createReview({
+      bookingId: bookingId as string,
+      studentId: studentProfile.id,
+      rating,
+      comment: comment || undefined,
+    });
+
+    if (result.success) {
+      res.status(201).json(result);
     } else {
       res.status(400).json(result);
     }

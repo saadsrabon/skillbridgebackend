@@ -1,3 +1,4 @@
+import { auth } from "../lib/auth";
 import { prisma } from "../lib/prisma";
 import { UserRole } from "../middlewares/authChecker";
 
@@ -22,30 +23,18 @@ async function seedAdmin() {
             throw new Error("User already exists!!");
         }
 
-        const signUpAdmin = await fetch("http://localhost:5000/api/auth/sign-up/email", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
+        const data = await auth.api.signUpEmail({
+            body: {
+                name: "Saad",
+                email: "admin@saad.com",
+                password: "password1234",
+
             },
-            body: JSON.stringify(adminData)
-        })
+        });
 
 
 
-        if (signUpAdmin.ok) {
-            console.log("**** Admin created")
-            await prisma.user.update({
-                where: {
-                    email: adminData.email
-                },
-                data: {
-                    emailVerified: true
-                }
-            })
 
-            console.log("**** Email verification status updated!")
-        }
-        console.log("******* SUCCESS ******")
 
     } catch (error) {
         console.error(error);

@@ -1,0 +1,825 @@
+{
+  "info": {
+    "name": "SkillBridge API",
+    "description": "Complete API collection for SkillBridge tutoring platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Sign Up",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"name\": \"John Doe\",\n  \"role\": \"STUDENT\",\n  \"phone\": \"+1234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-up/email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-up", "email"]
+            }
+          }
+        },
+        {
+          "name": "Sign In",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-in/email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-in", "email"]
+            }
+          }
+        },
+        {
+          "name": "Get Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/session",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "session"]
+            }
+          }
+        },
+        {
+          "name": "Sign Out",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-out",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-out"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profiles",
+      "item": [
+        {
+          "name": "Browse All Tutors (Legacy)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/profiles/all-profiles",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "all-profiles"]
+            }
+          }
+        },
+        {
+          "name": "Browse Tutors (Filtered)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/profiles/tutors?q=math&minRate=20&maxRate=60&minRating=4&sort=rating&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "tutors"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "math",
+                  "description": "Search query"
+                },
+                {
+                  "key": "subjectId",
+                  "value": "",
+                  "disabled": true,
+                  "description": "Filter by subject ID"
+                },
+                {
+                  "key": "minRate",
+                  "value": "20",
+                  "description": "Minimum hourly rate"
+                },
+                {
+                  "key": "maxRate",
+                  "value": "60",
+                  "description": "Maximum hourly rate"
+                },
+                {
+                  "key": "minRating",
+                  "value": "4",
+                  "description": "Minimum rating (0-5)"
+                },
+                {
+                  "key": "sort",
+                  "value": "rating",
+                  "description": "Sort: rating, rate_asc, rate_desc, experience"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Experienced tutor with 5 years of teaching\",\n  \"headline\": \"Math & Physics Expert\",\n  \"hourlyRate\": 50,\n  \"experience\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profiles/create-profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "create-profile"]
+            }
+          }
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/profiles/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "me"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Updated bio\",\n  \"hourlyRate\": 60\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profiles/update-profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", "update-profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subjects",
+      "item": [
+        {
+          "name": "Get All Subjects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/subject",
+              "host": ["{{baseUrl}}"],
+              "path": ["subject"]
+            }
+          }
+        },
+        {
+          "name": "Get Subject by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/subject/subject/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["subject", "subject", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Tutor's Subjects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/subject/tutor-subjects/:tutorId",
+              "host": ["{{baseUrl}}"],
+              "path": ["subject", "tutor-subjects", ":tutorId"],
+              "variable": [
+                {
+                  "key": "tutorId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Subject",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Advanced Calculus\",\n  \"slug\": \"advanced-calculus\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subject/create-subject",
+              "host": ["{{baseUrl}}"],
+              "path": ["subject", "create-subject"]
+            }
+          }
+        },
+        {
+          "name": "Assign Subject to Tutor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tutorId\": \"\",\n  \"subjectId\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subject/assign-subject",
+              "host": ["{{baseUrl}}"],
+              "path": ["subject", "assign-subject"]
+            }
+          }
+        },
+        {
+          "name": "Remove Subject from Tutor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tutorId\": \"\",\n  \"subjectId\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subject/remove-subject",
+              "host": ["{{baseUrl}}"],
+              "path": ["subject", "remove-subject"]
+            }
+          }
+        },
+        {
+          "name": "Update Subject",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"slug\": \"updated-slug\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subject/update-subject/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["subject", "update-subject", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Subject",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/subject/delete-subject/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["subject", "delete-subject", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Availability Slots",
+      "item": [
+        {
+          "name": "Get Tutor Slots",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/slots/tutors/:tutorId/slots?includeBooked=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["slots", "tutors", ":tutorId", "slots"],
+              "query": [
+                {
+                  "key": "includeBooked",
+                  "value": "false"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "tutorId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Available Slots in Date Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/slots/tutors/:tutorId/available?startDate=2026-02-10T00:00:00Z&endDate=2026-02-17T23:59:59Z",
+              "host": ["{{baseUrl}}"],
+              "path": ["slots", "tutors", ":tutorId", "available"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2026-02-10T00:00:00Z"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2026-02-17T23:59:59Z"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "tutorId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Slot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startTime\": \"2026-02-10T14:00:00Z\",\n  \"endTime\": \"2026-02-10T15:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/slots",
+              "host": ["{{baseUrl}}"],
+              "path": ["slots"]
+            }
+          }
+        },
+        {
+          "name": "Get Slot by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/slots/:slotId",
+              "host": ["{{baseUrl}}"],
+              "path": ["slots", ":slotId"],
+              "variable": [
+                {
+                  "key": "slotId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Slot",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startTime\": \"2026-02-10T15:00:00Z\",\n  \"endTime\": \"2026-02-10T16:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/slots/:slotId",
+              "host": ["{{baseUrl}}"],
+              "path": ["slots", ":slotId"],
+              "variable": [
+                {
+                  "key": "slotId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Slot",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/slots/:slotId",
+              "host": ["{{baseUrl}}"],
+              "path": ["slots", ":slotId"],
+              "variable": [
+                {
+                  "key": "slotId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tutorId\": \"\",\n  \"studentId\": \"\",\n  \"availableSlotId\": \"\",\n  \"price\": 50\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            }
+          }
+        },
+        {
+          "name": "Get Booking by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/:bookingId",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", ":bookingId"],
+              "variable": [
+                {
+                  "key": "bookingId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Booking Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings/:bookingId/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", ":bookingId", "status"],
+              "variable": [
+                {
+                  "key": "bookingId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/:bookingId/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", ":bookingId", "cancel"],
+              "variable": [
+                {
+                  "key": "bookingId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Submit Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Excellent tutor! Very helpful and patient.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings/:bookingId/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", ":bookingId", "review"],
+              "variable": [
+                {
+                  "key": "bookingId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Student Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/student/:studentId?status=COMPLETED",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "student", ":studentId"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "COMPLETED",
+                  "description": "Optional: PENDING, CONFIRMED, COMPLETED, CANCELLED"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "studentId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Tutor Sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/tutor/:tutorId?status=CONFIRMED",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "tutor", ":tutorId"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "CONFIRMED",
+                  "description": "Optional: PENDING, CONFIRMED, COMPLETED, CANCELLED"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "tutorId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Bookings in Date Range (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/range?startDate=2026-02-01T00:00:00Z&endDate=2026-02-28T23:59:59Z&status=COMPLETED",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "range"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2026-02-01T00:00:00Z"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2026-02-28T23:59:59Z"
+                },
+                {
+                  "key": "tutorId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "COMPLETED"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users?role=TUTOR&status=ACTIVE&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "",
+                  "disabled": true,
+                  "description": "Search by name or email"
+                },
+                {
+                  "key": "role",
+                  "value": "TUTOR",
+                  "description": "STUDENT, TUTOR, ADMIN"
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "ACTIVE, SUSPENDED, BANNED"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"BANNED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/:userId/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", ":userId", "status"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"TUTOR\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/:userId/role",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", ":userId", "role"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

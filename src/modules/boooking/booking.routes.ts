@@ -7,6 +7,7 @@ import {
   getTutorBookingsController,
   cancelBookingController,
   getBookingsInDateRangeController,
+  createReviewController,
 } from './booking.controller';
 import authChecker, { UserRole } from '../../middlewares/authChecker';
 
@@ -21,6 +22,8 @@ router.patch('/:bookingId/status',authChecker(UserRole.STUDENT, UserRole.TUTOR, 
 
 
 router.delete('/:bookingId/cancel', authChecker(UserRole.STUDENT, UserRole.ADMIN), cancelBookingController);
+
+router.post('/:bookingId/review', authChecker(UserRole.STUDENT, UserRole.ADMIN), createReviewController);
 
 router.get('/student/:studentId', getStudentBookingsController);
 

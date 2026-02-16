@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express"
 import { Prisma } from "../../generated/prisma/client";
 
+import fs from "fs";
+import path from "path";
+
 function errorHandler(
     err: any,
     req: Request,
@@ -10,6 +13,14 @@ function errorHandler(
     let statusCode = 500;
     let errorMessage = "Internal Server Error";
     let errorDetails = err;
+
+    // Log the error to a file for debugging
+    try {
+        const logMsg = `[${new Date().toISOString()}] ${req.method} ${req.url}\nError: ${err?.message || err}\nStack: ${err?.stack}\n\n`;
+        fs.appendFileSync(path.join(process.cwd(), "error.log"), logMsg);
+    } catch (logErr) {
+        console.error("Failed to write to error.log", logErr);
+    }
 
     // PrismaClientValidationError
     if (err instanceof Prisma.PrismaClientValidationError) {
@@ -46,10 +57,9 @@ function errorHandler(
         }
     }
 
-    res.status(statusCode)
-    res.json({
+    res.status(statusCode).json({
         message: errorMessage,
-        error: errorDetails
+        error: err?.message || "Unknown error" // More stable than the whole object
     })
 }
 

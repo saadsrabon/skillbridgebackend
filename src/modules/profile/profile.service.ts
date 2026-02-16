@@ -86,8 +86,230 @@ const updateProfileByUserId = async (userId: string, data: Partial<ProfileData>,
     }
 }
 
+// Public tutor browsing - legacy endpoint
+const getAllTutorProfiles = async () => {
+    return await prisma.user.findMany({
+        where: {
+            role: 'TUTOR',
+            tutorProfile: {
+                isNot: null
+            }
+        },
+        include: {
+            tutorProfile: {
+                include: {
+                    tutorSubjects: {
+                        include: {
+                            subject: true
+                        }
+                    },
+                    availabilitySlots: {
+                        where: {
+                            isBooked: false
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Public tutor browsing with filters
+interface TutorFilters {
+    q?: string;
+    subjectId?: string;
+    minRate?: number;
+    maxRate?: number;
+    minRating?: number;
+    sort?: 'rating' | 'rate_asc' | 'rate_desc' | 'experience';
+    page?: number;
+    limit?: number;
+}
+
+const getTutorProfiles = async (filters: TutorFilters) => {
+    const {
+        q,
+        subjectId,
+        minRate,
+        maxRate,
+        minRating,
+        sort = 'rating',
+        page = 1,
+        limit = 10
+    } = filters;
+
+    const skip = (page - 1) * limit;
+
+    // Build where clause
+    const where: any = {
+        role: 'TUTOR',
+        tutorProfile: {
+            isNot: null
+        }
+    };
+
+    // Search query (name, bio, headline)
+    if (q) {
+        where.OR = [
+            { name: { contains: q, mode: 'insensitive' } },
+            { tutorProfile: { bio: { contains: q, mode: 'insensitive' } } },
+            { tutorProfile: { headline: { contains: q, mode: 'insensitive' } } }
+        ];
+    }
+
+    // Subject filter
+    if (subjectId) {
+        where.tutorProfile = {
+            ...where.tutorProfile,
+            tutorSubjects: {
+                some: {
+                    subjectId: subjectId
+                }
+            }
+        };
+    }
+
+    // Rate filters
+    if (minRate !== undefined || maxRate !== undefined) {
+        where.tutorProfile = {
+            ...where.tutorProfile,
+            hourlyRate: {}
+        };
+        if (minRate !== undefined) {
+            where.tutorProfile.hourlyRate.gte = minRate;
+        }
+        if (maxRate !== undefined) {
+            where.tutorProfile.hourlyRate.lte = maxRate;
+        }
+    }
+
+    // Rating filter
+    if (minRating !== undefined) {
+        where.tutorProfile = {
+            ...where.tutorProfile,
+            ratings: {
+                gte: minRating
+            }
+        };
+    }
+
+    // Build orderBy clause
+    let orderBy: any = {};
+    switch (sort) {
+        case 'rating':
+            orderBy = { tutorProfile: { ratings: 'desc' } };
+            break;
+        case 'rate_asc':
+            orderBy = { tutorProfile: { hourlyRate: 'asc' } };
+            break;
+        case 'rate_desc':
+            orderBy = { tutorProfile: { hourlyRate: 'desc' } };
+            break;
+        case 'experience':
+            orderBy = { tutorProfile: { experience: 'desc' } };
+            break;
+        default:
+            orderBy = { tutorProfile: { ratings: 'desc' } };
+    }
+
+    // Get total count
+    const total = await prisma.user.count({ where });
+
+    // Get tutors
+    const tutors = await prisma.user.findMany({
+        where,
+        include: {
+            tutorProfile: {
+                include: {
+                    tutorSubjects: {
+                        include: {
+                            subject: true
+                        }
+                    },
+                    reviews: {
+                        take: 5,
+                        orderBy: {
+                            createdAt: 'desc'
+                        },
+                        include: {
+                            student: {
+                                select: {
+                                    user: {
+                                        select: {
+                                            name: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        orderBy,
+        skip,
+        take: limit
+    });
+
+    return {
+        data: tutors,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+        }
+    };
+}
+
+const getTutorById = async (id: string) => {
+    return await prisma.tutorProfile.findUnique({
+        where: { id },
+        include: {
+            user: {
+                select: {
+                    name: true,
+                    email: true,
+                    image: true,
+                    phone: true
+                }
+            },
+            tutorSubjects: {
+                include: {
+                    subject: true
+                }
+            },
+            availabilitySlots: {
+                where: {
+                    isBooked: false
+                }
+            },
+            reviews: {
+                orderBy: {
+                    createdAt: 'desc'
+                },
+                include: {
+                    student: {
+                        select: {
+                            user: {
+                                select: {
+                                    name: true,
+                                    image: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
 export const profileService = {
     createProfile,
     getProfileByUserId,
-    updateProfileByUserId
+    updateProfileByUserId,
+    getAllTutorProfiles,
+    getTutorProfiles,
+    getTutorById
 };
